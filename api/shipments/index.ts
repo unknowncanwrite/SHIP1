@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { db } from '../lib/db';
-import { shipments, auditLogs } from '../../shared/schema';
+import { db } from '../../lib/db.js';
+import { shipments, auditLogs } from '../../shared/schema.js';
 import { desc } from 'drizzle-orm';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -26,9 +26,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         createdAt: data.createdAt ?? now,
         lastUpdated: data.lastUpdated ?? now,
       };
-      
+
       const [inserted] = await db.insert(shipments).values(newShipment).returning();
-      
+
       await db.insert(auditLogs).values({
         id: crypto.randomUUID(),
         shipmentId: data.id,
@@ -36,7 +36,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         summary: `Created shipment ${data.id}`,
         timestamp: now,
       });
-      
+
       return res.status(201).json(inserted);
     }
 

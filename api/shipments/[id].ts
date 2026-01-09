@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { db } from '../lib/db';
-import { shipments, auditLogs } from '../../shared/schema';
+import { db } from '../../lib/db.js';
+import { shipments, auditLogs } from '../../shared/schema.js';
 import { eq } from 'drizzle-orm';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -33,7 +33,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         .set({ ...req.body, lastUpdated: Date.now() })
         .where(eq(shipments.id, shipmentId))
         .returning();
-      
+
       if (!updated) {
         return res.status(404).json({ error: 'Shipment not found' });
       }
